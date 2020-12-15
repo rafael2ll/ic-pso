@@ -11,4 +11,4 @@ if __name__ == '__main__':
     problem = tsplib95.load('../data/gr24.tsp')
     print(problem.get_edges())
     swarm = Swarm(problem)
-    swarm.submit(10000)
+    swarm.submit(100)
