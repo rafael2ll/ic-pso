@@ -4,13 +4,13 @@ from typing import List
 import numpy as np
 
 from pso.base.adjuster import fit, correct_path, velocity_idx
-from pso.base.particle import Particle
+from pso.base.particle import CParticle
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 
-class Swarm:
+class CPSO:
     def __init__(self, problem, size=100):
         self.problem = problem
         self.length = len(list(problem.get_nodes()))
@@ -23,7 +23,7 @@ class Swarm:
 
         permutations = np.array([
             np.random.permutation(range(len(list(self.problem.get_nodes())))) for _ in list(range(size))])
-        self.particles: List[Particle] = [Particle(perm) for perm in permutations]
+        self.particles: List[CParticle] = [CParticle(perm) for perm in permutations]
         logger.debug(f"Initial swarm[{self.length}]:\n{self.particles}")
 
     def submit(self, iterations=1000):
@@ -59,3 +59,4 @@ class Swarm:
                         logger.info(f"Best distance: {self.best_path}\tBest Path:{self.best_path_pos}")
 
         logger.info(f"{':' * 5} Best distance: {self.best_path}\tBest Path:{self.best_path_pos} {':' * 5}")
+        return self.best_path, self.best_path_pos

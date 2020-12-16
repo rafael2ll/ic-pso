@@ -3,13 +3,19 @@ import random
 import numpy as np
 import tsplib95
 
+from pso.base.particle import DParticle
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 def fit(path, problem):
-    return sum(problem.get_weight(a, b) for a, b in zip(path[0:], path[1:]))
+    cyclic_path = np.hstack((path, np.array([path[0]])))
+    return sum(problem.get_weight(a, b) for a, b in zip(cyclic_path[0:], cyclic_path[1:]))
+
+
+def discrete_velocity(particle: DParticle):
+    return random.choices(particle.velocity, k=np.random.randint(len(particle.position)))
 
 
 def velocity_idx(problem: tsplib95, vi: np.array, yi: np.array, xi: np.array, y_best: np.array, c1: float, c2: float):
@@ -21,17 +27,11 @@ def velocity_idx(problem: tsplib95, vi: np.array, yi: np.array, xi: np.array, y_
     return v
 
 
-def velocity_by_dist(problem: tsplib95, vi: np.array, yi: np.array, xi: np.array, y_best: np.array, c1: float,
-                     c2: float):
-    r1 = np.random.uniform(0, 1, xi.shape)
-    r2 = np.random.uniform(0, 1, xi.shape)
-    yi_minus_xi = np.array([problem.get_weight(y, x) for y, x in zip(yi, xi)]) * 0.01
-    ybest_minus_xi = np.array([problem.get_weight(y, x) for y, x in zip(y_best, xi)]) * 0.01
-    logger.debug(f"Original F: {vi} + {c1} * {r1} * ({yi} - {xi}) + {c2} * {r2} * ({y_best} - {xi})")
-    logger.debug(f"Distance F: {vi} + {c1} * {r1} * ({yi_minus_xi}) + {c2} * {r2} * ({ybest_minus_xi})")
-    v = np.abs(np.array(vi + c1 * r1 * yi_minus_xi + c2 * r2 * ybest_minus_xi, dtype=np.int64))
-    logger.debug(f"Velocity: {v}")
-    return v
+def adjust_discrete_position(particle: DParticle, velocity: np.array):
+    for exchange in velocity:
+        tmp = np.copy(particle.position[exchange[0]])
+        particle.position[exchange[0]] = particle.position[exchange[1]]
+        particle.position[exchange[1]] = tmp
 
 
 def correct_path(position: np.array, problem_size):
@@ -55,4 +55,4 @@ if __name__ == '__main__':
     y_best = np.array([25, 26, 28, 30, 35])
     C1 = np.random.random()
     C2 = np.random.random()
-    print(velocity(vi, yi, xi, y_best, C1, C2))
+    print(velocity_idx(vi, yi, xi, y_best, C1, C2))
