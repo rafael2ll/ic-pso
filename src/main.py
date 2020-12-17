@@ -13,17 +13,17 @@ from pso.base.discrete_pso import DPSO
 
 def run_discrete_bench(i, problem):
     dpso = DPSO(problem)
-    return (i, dpso.submit(1000))
+    return (i, dpso.submit(100))
 
 
 def run_continue_bench(i, problem):
     cpso = CPSO(problem)
-    return (i, cpso.submit(1000))
+    return (i, cpso.submit(100))
 
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
-    problem = tsplib95.load('../data/gr24.tsp')
+    problem = tsplib95.load('../data/gr48.tsp')
     CPSO(problem).submit(10)
     discrete = Parallel(n_jobs=10)(delayed(run_discrete_bench)(i, problem) for i in tqdm.tqdm(range(10)))
     continue_ = Parallel(n_jobs=10)(delayed(run_continue_bench)(i, problem) for i in tqdm.tqdm(range(10)))

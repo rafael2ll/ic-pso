@@ -1,3 +1,12 @@
-algoritmo,mean,min
-CPSO,2148.3,2021
-DPSO,2125.6,1813
+algoritmo,problem,mean,min
+Ideal,24,-,1272
+AG Sugerido,24,1331,1272
+AG Desenvolvido,24,-,1300
+PSO Continuo,24,2148.3,2021
+PSO Discreto,24,2125.6,1813
+,,,
+Ideal,48,-,5046
+AG Sugerido,48,5533,5080
+AG Desenvolvido,48,-,6893
+PSO Continuo,48,15801,14630
+PSO Discreto,48,16074,15422
